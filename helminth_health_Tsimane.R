@@ -404,6 +404,36 @@ stargazer(m1, m2, m3, m4, m5, m6, m7, m8,
 
 
 
+#####################################################################
+
+## Panel models of infection predicting systolic blood pressure,
+##  including lipids and hemoglobin 
+
+#####################################################################
+
+m1 <- plm(SBP ~ years + hookworm + ldl + trig,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m2 <- plm(SBP ~ years + helminth + ldl + trig,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m3 <- plm(SBP ~ years + hookworm + hb,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m4 <- plm(SBP ~ years + helminth + hb,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+
+stargazer(m1, m2, m3, m4,
+          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
+          star.char = c("t", "*", "**"), 
+          out = "/filepath/hookhelm_sbp_lipids_hb_within.html")
+
+
 
 #####################################################################
 
@@ -497,47 +527,6 @@ plot
 
 ggsave("/filepath/hookhelminthldlapoe.png", plot = plot, dpi = "retina",
        height = 5, width = 8)
-
-
-
-#####################################################################
-
-## Panel models of infection predicting cardiometabolic health,
-##  interaction by sex 
-
-#####################################################################
-
-m1 <- plm(ldl ~ years + hookworm*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-m2 <- plm(ldl ~ years + helminth*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-m3 <- plm(hdl ~ years + hookworm*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-m4 <- plm(hdl ~ years + helminth*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-m5 <- plm(trig ~ years + hookworm*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-m6 <- plm(trig ~ years + helminth*female,
-          index = c("pid"),
-          model = "within",
-          data = ldl)
-
-
-stargazer(m1, m2, m3, m4, m5, m6, 
-          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
-          star.char = c("t", "*", "**"), 
-          out = "/filepath/hookhelm_sexinteraction_within.html")
-
 
 
 #####################################################################
