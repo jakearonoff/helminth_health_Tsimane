@@ -282,11 +282,11 @@ weightm <- group_by(weight, pid) %>% mutate(helminth = mean(helminth),
                                             weight = mean(weight)) %>% filter(!duplicated(pid))
 
 
-m1 <- lm(BMI ~ age + female + years + route_distance_townp + hookworm, data = bmim)
-m2 <- lm(BMI ~ age + female + years + route_distance_townp + helminth, data = bmim)
+m1 <- lm(BMI ~ age + female + years + route_distance_town + hookworm, data = bmim)
+m2 <- lm(BMI ~ age + female + years + route_distance_town + helminth, data = bmim)
 
-m3 <- lm(weight ~ age + female + years + route_distance_townp + hookworm, data = weightm)
-m4 <- lm(weight ~ age + female + years + route_distance_townp + helminth, data = weightm)
+m3 <- lm(weight ~ age + female + years + route_distance_town + hookworm, data = weightm)
+m4 <- lm(weight ~ age + female + years + route_distance_town + helminth, data = weightm)
 
 stargazer(m1, m2, m3, m4,
           align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
@@ -764,27 +764,27 @@ summary(medresult)
 
 #####################################################################
 
-m1 <- plm(ldl ~ years + hookworm*route_distance_townp,
+m1 <- plm(ldl ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
-m2 <- plm(ldl ~ years + helminth*route_distance_townp,
+m2 <- plm(ldl ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
-m3 <- plm(hdl ~ years + hookworm*route_distance_townp,
+m3 <- plm(hdl ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
-m4 <- plm(hdl ~ years + helminth*route_distance_townp,
+m4 <- plm(hdl ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
-m5 <- plm(trig ~ years + hookworm*route_distance_townp,
+m5 <- plm(trig ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
-m6 <- plm(trig ~ years + helminth*route_distance_townp,
+m6 <- plm(trig ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = ldl)
@@ -796,27 +796,27 @@ stargazer(m1, m2, m3, m4, m5, m6,
 
 
 
-m1 <- plm(glucose ~ years + hookworm*route_distance_townp,
+m1 <- plm(glucose ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = glu)
-m2 <- plm(glucose ~ years + helminth*route_distance_townp,
+m2 <- plm(glucose ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = glu)
-m3 <- plm(SBP ~ years + hookworm*route_distance_townp,
+m3 <- plm(SBP ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = bp)
-m4 <- plm(SBP ~ years + helminth*route_distance_townp,
+m4 <- plm(SBP ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = bp)
-m5 <- plm(hb ~ years + hookworm*route_distance_townp,
+m5 <- plm(hb ~ years + hookworm*route_distance_town,
           index = c("pid"),
           model = "within",
           data = hb)
-m6 <- plm(hb ~ years + helminth*route_distance_townp,
+m6 <- plm(hb ~ years + helminth*route_distance_town,
           index = c("pid"),
           model = "within",
           data = hb)
