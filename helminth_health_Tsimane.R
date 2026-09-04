@@ -109,25 +109,130 @@ m8 <- plm(weight ~ years + helminth,
           index = c("pid"),
           model = "within",
           data = weight)
-m9 <- plm(hb ~ years + hookworm,
-          index = c("pid"),
-          model = "within",
-          data = hb)
-m10 <- plm(hb ~ years + helminth,
-           index = c("pid"),
-           model = "within",
-           data = hb)
 
-stargazer(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
+stargazer(m1, m2, m3, m4, m5, m6, m7, m8,
           align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
           star.char = c("t", "*", "**"), 
-          out = "/filepath/hookhelm_bpbmihb_within.html")
+          out = "/filepath/hookhelm_bpbmi_within.html")
+
+
 
 
 
 #####################################################################
 
-## Figure 1
+## Panel models of single helminth infection and co-infection predicting cardiometabolic health
+
+#####################################################################
+
+m1 <- plm(ldl ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m2 <- plm(hdl ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m3 <- plm(trig ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m4 <- plm(glucose ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = glu)
+m5 <- plm(SBP ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m6 <- plm(DBP ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m7 <- plm(BMI ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = bmi)
+m8 <- plm(weight ~ years + helminth_single + helminth_coinf,
+          index = c("pid"),
+          model = "within",
+          data = weight)
+
+stargazer(m1, m2, m3, m4, m5, m6, m7, m8, 
+          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
+          star.char = c("t", "*", "**"), 
+          out = "/filepath/hookhelm_bpbmi_within.html")
+
+
+
+#####################################################################
+
+## Models of egg counts per gram of stool sample (among infected samples) predicting cardiometabolic health
+
+#####################################################################
+
+# focusing on the hookworm infected samples 
+bphookcount <- bp[bp$hookworm_n > 0,]
+bmihookcount <- bmi[bmi$hookworm_n > 0,]
+weighthookcount <- weight[weight$hookworm_n > 0,]
+
+# focusing on the helminth (any) infected samples 
+bphelmcount <- bp[bp$helminth_n > 0,]
+bmihelmcount <- bmi[bmi$helminth_n > 0,]
+weighthelmcount <- weight[weight$helminth_n > 0,]
+
+# log-transforming the skewed egg counts and standardized for greater interpretability 
+bphookcount$hookworm_nz <- as.numeric(scale(log(bphookcount$hookworm_n)))
+bmihookcount$hookworm_nz <- as.numeric(scale(log(bmihookcount$hookworm_n)))
+weighthookcount$hookworm_nz <- as.numeric(scale(log(weighthookcount$hookworm_n)))
+
+bphelmcount$helminth_nz <- as.numeric(scale(log(bphelmcount$helminth_n)))
+bmihelmcount$helminth_nz <- as.numeric(scale(log(bmihelmcount$helminth_n)))
+weighthelmcount$helminth_nz <- as.numeric(scale(log(weighthelmcount$helminth_n)))
+
+
+m1 <- plm(SBP ~ years + hookworm_nz,
+          index = c("pid"),
+          model = "within",
+          data = bphookcount)
+m2 <- plm(SBP ~ years + helminth_nz,
+          index = c("pid"),
+          model = "within",
+          data = bphelmcount)
+m3 <- plm(DBP ~ years + hookworm_nz,
+          index = c("pid"),
+          model = "within",
+          data = bphookcount)
+m4 <- plm(DBP ~ years + helminth_nz,
+          index = c("pid"),
+          model = "within",
+          data = bphelmcount)
+m5 <- plm(BMI ~ years + hookworm_nz,
+          index = c("pid"),
+          model = "within",
+          data = bmihookcount)
+m6 <- plm(BMI ~ years + helminth_nz,
+          index = c("pid"),
+          model = "within",
+          data = bmihelmcount)
+m7 <- plm(weight ~ years + hookworm_nz,
+          index = c("pid"),
+          model = "within",
+          data = weighthookcount)
+m8 <- plm(weight ~ years + helminth_nz,
+          index = c("pid"),
+          model = "within",
+          data = weighthelmcount)
+
+stargazer(m1, m2, m3, m4, m5, m6, m7, m8,
+          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
+          star.char = c("t", "*", "**"), 
+          out = "/filepath/hookhelm_eggcount_bpbmiweight_within.html")
+
+
+#####################################################################
+
+## Figure 2
 
 #####################################################################
 
@@ -137,9 +242,6 @@ ldl <- ungroup(ldl) %>% mutate(trigw = trig/mean(trig)*100)
 glu <- ungroup(glu) %>% mutate(glucosew = glucose/mean(glucose)*100)
 bp <- ungroup(bp) %>% mutate(SBPw = SBP/mean(SBP)*100)
 bp <- ungroup(bp) %>% mutate(DBPw = DBP/mean(DBP)*100)
-bmi <- ungroup(bmi) %>% mutate(BMIw = BMI/mean(BMI)*100)
-hb <- ungroup(hb) %>% mutate(hbw = hb/mean(hb)*100)
-weight <- ungroup(weight) %>% mutate(weightw = weight/mean(weight)*100)
 
 
 ldl$infection <- ldl$hookworm
@@ -173,10 +275,6 @@ m11 <- plm(DBPw ~ years + infection,
            index = c("pid"),
            model = "within",
            data = bp)
-m13 <- plm(hbw ~ years + infection,
-           index = c("pid"),
-           model = "within",
-           data = hb)
 
 
 ldl$infection <- ldl$helminth
@@ -211,10 +309,6 @@ m12 <- plm(DBPw ~ years + infection,
            index = c("pid"),
            model = "within",
            data = bp)
-m14 <- plm(hbw ~ years + infection,
-           index = c("pid"),
-           model = "within",
-           data = hb)
 
 
 # plot settings
@@ -234,12 +328,11 @@ coef_names <- c(
   "Infection" = "infection")
 
 
-plot <- plot_summs(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14,
+plot <- plot_summs(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12,
                    coefs = coef_names,
                    model.names = c("LDL (hookworm)", "LDL (any helminth)", "HDL (hookworm)", "HDL (any helminth)", 
                                    "Trig (hookworm)", "Trig (any helminth)", "Glu (hookworm)", "Glu (any helminth)",
-                                   "SBP (hookworm)", "SBP (any helminth)", "DBP (hookworm)", "DBP (any helminth)", 
-                                   "Hb (hookworm)", "Hb (any helminth)"),
+                                   "SBP (hookworm)", "SBP (any helminth)", "DBP (hookworm)", "DBP (any helminth)"),
                    position = position_dodge(width = 1.3),
                    colors = c("brown1", "brown4", "orchid", "orchid4", "orange", "orange4",
                               "dodgerblue", "dodgerblue4", "green", "green4", "gray", "gray1", "brown2", "red4"),
@@ -427,7 +520,7 @@ stargazer(m1, m2, m3, m4, m5, m6, m7, m8,
 
 #####################################################################
 
-## Figure 2
+## Figure 3
 
 #####################################################################
 
@@ -573,7 +666,7 @@ stargazer(m1, m2, m3, m4, m5, m6,
 
 #####################################################################
 
-## Figure 3
+## Figure 4
 
 #####################################################################
 
@@ -826,6 +919,77 @@ stargazer(m1, m2, m3, m4, m5, m6,
           star.char = c("t", "*", "**"), 
           out = "/filepath/hookhelm_distanceinteraction2_within.html")
 
+
+
+
+#####################################################################
+
+## Panel models of infection predicting cardiometabolic health,
+##  interaction by BMI (another proxy for market integration) 
+
+#####################################################################
+
+m1 <- plm(ldl ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m2 <- plm(ldl ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m3 <- plm(hdl ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m4 <- plm(hdl ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m5 <- plm(trig ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+m6 <- plm(trig ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = ldl)
+
+stargazer(m1, m2, m3, m4, m5, m6, 
+          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
+          star.char = c("t", "*", "**"), 
+          out = "/filepath/hookhelm_BMIinteraction1_within.html")
+
+
+
+m1 <- plm(glucose ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = glu)
+m2 <- plm(glucose ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = glu)
+m3 <- plm(SBP ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m4 <- plm(SBP ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = bp)
+m5 <- plm(hb ~ years + hookworm*BMI,
+          index = c("pid"),
+          model = "within",
+          data = hb)
+m6 <- plm(hb ~ years + helminth*BMI,
+          index = c("pid"),
+          model = "within",
+          data = hb)
+
+stargazer(m1, m2, m3, m4, m5, m6, 
+          align = T, single.row = T, digits = 2, ci = T, star.cutoffs = c(0.10, 0.05, 0.01), 
+          star.char = c("t", "*", "**"), 
+          out = "/filepath/hookhelm_BMIinteraction2_within.html")
 
 
 #####################################################################
